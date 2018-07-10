@@ -30,7 +30,7 @@ namespace code
             var progressBarOptions = new ProgressBarOptions
             {
                 ForegroundColor = ConsoleColor.Green,
-	            BackgroundColor = ConsoleColor.DarkGreen,
+                BackgroundColor = ConsoleColor.DarkGreen,
                 ProgressCharacter = '─',
                 ProgressBarOnBottom = true
             };
@@ -60,7 +60,7 @@ namespace code
                     {
                         var ext = Path.GetExtension(item.Link);
                         var fileName = item.Name.EndsWith(ext) ? item.Name : item.Name + ext;
-                        var filePath = "../docs/" + fileName;
+                        var filePath = "./" + fileName;
 
 
                         var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, item.Link));
@@ -89,9 +89,9 @@ namespace code
                             var totalBytesRead = 0L;
                             var bytesRead = 0;
 
-                            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) != 0) 
+                            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) != 0)
                             {
-                                await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken).ConfigureAwait(false);
+                                await destination.WriteAsync(buffer, 0, bytesRead, cancellationToken);
                                 totalBytesRead += bytesRead;
                                 progressBar.Tick((int)totalBytesRead);
                             }

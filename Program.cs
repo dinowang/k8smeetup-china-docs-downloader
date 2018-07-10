@@ -62,11 +62,23 @@ namespace code
                         var fileName = item.Name.EndsWith(ext) ? item.Name : item.Name + ext;
                         var filePath = "../docs/" + fileName;
 
-                        Console.WriteLine($"Downloading {fileName} ...");
 
                         var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, item.Link));
                         var totalSize = response.Content.Headers.ContentLength;
                         var lastModified = response.Content.Headers.LastModified;
+
+                        if (File.Exists(filePath))
+                        {
+                            var fileInfo = new FileInfo(filePath);
+
+                            if (fileInfo.Length == totalSize || (lastModified.HasValue && fileInfo.LastWriteTime == lastModified.Value.DateTime))
+                            {
+                                Console.WriteLine($"Not Modified, skipping {fileName} ...");
+                                continue;
+                            }
+                        }
+
+                        Console.WriteLine($"Downloading {fileName} ...");
 
                         using (var progressBar = new ProgressBar((int)totalSize.Value, $"Downloading ...", progressBarOptions))
                         using (var source = await client.GetStreamAsync(item.Link))
